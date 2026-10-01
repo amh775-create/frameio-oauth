@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Frame.io OAuth Callback</title>
+  <style>
+    body {
+      font-family: system-ui, sans-serif;
+      max-width: 760px;
+      margin: 60px auto;
+      padding: 0 20px;
+      line-height: 1.6;
+    }
+    textarea {
+      width: 100%;
+      min-height: 150px;
+      box-sizing: border-box;
+      padding: 12px;
+      font-family: monospace;
+    }
+    button {
+      margin-top: 12px;
+      padding: 10px 18px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    #status {
+      margin-top: 16px;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+  <h1>Frame.io OAuth Callback</h1>
+
+  <p>
+    Adobe認証が完了しました。
+    下のURLをコピーして、Premiere Proの
+    「認証後URL」欄へ貼り付けてください。
+  </p>
+
+  <textarea id="callbackUrl" readonly></textarea>
+
+  <button id="copyButton">URLをコピー</button>
+
+  <div id="status"></div>
+
+  <script>
+    const url = window.location.href;
+    const textarea = document.getElementById("callbackUrl");
+    const status = document.getElementById("status");
+
+    textarea.value = url;
+
+    const params = new URLSearchParams(window.location.search);
+
+    if (params.get("code")) {
+      status.textContent = "認証コードを受信しました。";
+    } else if (params.get("error")) {
+      status.textContent =
+        "認証エラー: " + params.get("error");
+    } else {
+      status.textContent =
+        "認証情報はまだ受信していません。";
+    }
+
+    document
+      .getElementById("copyButton")
+      .addEventListener("click", async () => {
+        await navigator.clipboard.writeText(url);
+        status.textContent =
+          "URLをコピーしました。Premiere Proへ貼り付けてください。";
+      });
+  </script>
+</body>
+</html>
